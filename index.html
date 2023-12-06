@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bouncing Ball</title>
-  <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
-  <script src="https://cdn.webrtc-experiment.com/whammy.js"></script>
   <style>
     body {
       margin: 0;
@@ -42,18 +40,6 @@
       opacity: 0.5;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
     }
-
-    #recordButton {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -61,7 +47,16 @@
     <div class="ball" id="ball"></div>
   </div>
 
-  <button id="recordButton">Record</button>
+  <audio class="bounceSound" preload="auto">
+    <!-- Add your sound files to the array -->
+    <source src="piano-mp3_A1.mp3" type="audio/mp3">
+    <source src="piano-mp3_A2.mp3" type="audio/mp3">
+    <source src="piano-mp3_A3.mp3" type="audio/mp3">
+    <source src="piano-mp3_A4.mp3" type="audio/mp3">
+    <source src="piano-mp3_A5.mp3" type="audio/mp3">
+    <source src="piano-mp3_A6.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
 
   <script>
     function random(min, max) {
@@ -70,7 +65,7 @@
 
     const square = document.getElementById('square');
     const ball = document.getElementById('ball');
-    const recordButton = document.getElementById('recordButton');
+    const bounceSound = document.querySelector('.bounceSound');
     const trailContainer = createTrailContainer();
     let x = Math.random() * (square.offsetWidth - ball.offsetWidth);
     let y = Math.random() * (square.offsetHeight - ball.offsetHeight);
@@ -79,8 +74,7 @@
     let hue = 0;
     let trailLength = 10;
     let frameCounter = 0;
-    let recording = false;
-    let recorder;
+    let soundIndex = 0; // Index to track which sound to play
 
     function createTrailContainer() {
       const trailContainer = document.createElement('div');
@@ -118,14 +112,17 @@
     }
 
     function playBounceSound() {
-      const audio = new Audio();
-      audio.src = `piano-mp3_${String.fromCharCode(65 + random(0, 5))}1.mp3`;
-      audio.currentTime = 0;
-      audio.play();
+      // Set the source based on the soundIndex
+      bounceSound.src = `piano-mp3_${String.fromCharCode(65 + soundIndex)}1.mp3`;
+      bounceSound.currentTime = 0;
+      bounceSound.play();
       square.classList.add('bounce');
       setTimeout(() => {
         square.classList.remove('bounce');
       }, 300);
+
+      // Cycle to the next sound (reset to 1 after the last sound)
+      soundIndex = (soundIndex + 1) % 6;
     }
 
     function updateColors() {
@@ -149,38 +146,8 @@
 
     function animate() {
       updatePosition();
-      if (recording) {
-        recorder.addFrame(square, { copy: true, delay: 42 });
-      }
       requestAnimationFrame(animate);
     }
-
-    function startRecording() {
-      recorder = RecordRTC(square, {
-        type: 'canvas',
-        showMousePointer: true,
-        useWhammyRecorder: true,
-      });
-      recorder.startRecording();
-    }
-
-    function stopRecording() {
-      recorder.stopRecording(() => {
-        const blob = recorder.getBlob();
-        invokeSaveAsDialog(blob);
-      });
-    }
-
-    recordButton.addEventListener('click', () => {
-      if (!recording) {
-        startRecording();
-        recordButton.textContent = 'Stop Recording';
-      } else {
-        stopRecording();
-        recordButton.textContent = 'Record';
-      }
-      recording = !recording;
-    });
 
     animate();
   </script>
