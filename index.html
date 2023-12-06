@@ -24,7 +24,7 @@
       height: 30px;
       border-radius: 50%;
       background-color: hsl(0, 100%, 50%);
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for 3D effect */
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
     }
 
     .trail {
@@ -33,7 +33,7 @@
       height: 30px;
       border-radius: 50%;
       opacity: 0.5;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for 3D effect */
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
     }
   </style>
 </head>
@@ -43,7 +43,7 @@
   </div>
 
   <audio id="bounceSound">
-    <source src="sounds_moon.mp3" type="audio/mp3">
+    <source src="bounce.mp3" type="audio/mp3">
     Your browser does not support the audio element.
   </audio>
 
@@ -60,6 +60,8 @@
     let speed = 2;
     let angle = Math.random() * Math.PI * 2;
     let hue = 0;
+    let trailLength = 10;
+    let frameCounter = 0;
 
     function updatePosition() {
       x += speed * Math.cos(angle);
@@ -80,12 +82,10 @@
       ball.style.transform = `translate(${x}px, ${y}px)`;
       ball.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
 
-      // Create and update the trail
-      const trail = document.createElement('div');
-      trail.className = 'trail';
-      trail.style.transform = `translate(${x}px, ${y}px)`;
-      trail.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
-      trailContainer.appendChild(trail);
+      frameCounter++;
+      if (frameCounter % 3 === 0) {
+        updateTrail();
+      }
     }
 
     function playBounceSound() {
@@ -95,6 +95,18 @@
 
     function updateColor() {
       hue = (hue + 30) % 360; // Increment the hue (change this value for different speed)
+    }
+
+    function updateTrail() {
+      const trail = document.createElement('div');
+      trail.className = 'trail';
+      trail.style.transform = `translate(${x}px, ${y}px)`;
+      trail.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+      trailContainer.appendChild(trail);
+
+      if (trailContainer.children.length > trailLength) {
+        trailContainer.removeChild(trailContainer.children[0]);
+      }
     }
 
     function animate() {
