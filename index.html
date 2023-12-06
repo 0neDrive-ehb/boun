@@ -112,7 +112,8 @@
     }
 
     function playBounceSound() {
-      bounceSound.src = `bounce${soundIndex + 1}.mp3`; // Set the source based on the soundIndex
+      // Set the source based on the soundIndex
+      bounceSound.src = `piano-mp3_${String.fromCharCode(65 + soundIndex)}1.mp3`;
       bounceSound.currentTime = 0;
       bounceSound.play();
       square.classList.add('bounce');
