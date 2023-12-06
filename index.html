@@ -1,43 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-    <title>BeatMaker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bouncing Ball</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #square {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 2px solid #000;
+      margin: 50px auto;
+    }
+
+    #ball {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: hsl(0, 100%, 50%);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for 3D effect */
+    }
+
+    .trail {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      opacity: 0.5;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for 3D effect */
+    }
+  </style>
 </head>
 <body>
-    <section class="app">
-        <div class="header">
-            <h1>Some Balls Jumping on Music</h1>
-            <p>Tap to play music</p>
-        </div>
-        <div class="visual">
-            <h3 style="color: aliceblue; margin-top: 90px; z-index: -1;">ⓒRushikesh Ubale</h3>
-        </div>
-        <div class="pads">
-            <div class="pad1">
-                <audio class="sound" src="sounds_bubbles.mp3"></audio>
-            </div>
-            <div class="pad2">
-                <audio class="sound" src="sounds_clay.mp3"></audio>
-            </div>
-            <div class="pad3">
-                <audio class="sound" src="sounds_confetti.mp3"></audio>
-            </div>
-            <div class="pad4">
-                <audio class="sound" src="sounds_glimmer.mp3"></audio>
-            </div>
-            <div class="pad5">
-                <audio class="sound" src="sounds_moon.mp3"></audio>
-            </div>
-            <div class="pad6">
-                <audio class="sound" src="sounds_ufo.mp3"></audio>
-            </div>
-        </div>
-    </section>
-    <script src="script.js"></script>
+  <div id="square">
+    <div id="ball"></div>
+  </div>
+
+  <audio id="bounceSound">
+    <source src="sounds_moon.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const square = document.getElementById('square');
+    const ball = document.getElementById('ball');
+    const bounceSound = document.getElementById('bounceSound');
+    const trailContainer = document.createElement('div');
+    trailContainer.id = 'trail-container';
+    square.appendChild(trailContainer);
+
+    let x = 0;
+    let y = 0;
+    let speed = 2;
+    let angle = Math.random() * Math.PI * 2;
+    let hue = 0;
+
+    function updatePosition() {
+      x += speed * Math.cos(angle);
+      y += speed * Math.sin(angle);
+
+      if (x + ball.offsetWidth >= square.offsetWidth || x <= 0) {
+        angle = Math.PI - angle; // Bounce horizontally
+        playBounceSound();
+        updateColor();
+      }
+
+      if (y + ball.offsetHeight >= square.offsetHeight || y <= 0) {
+        angle = -angle; // Bounce vertically
+        playBounceSound();
+        updateColor();
+      }
+
+      ball.style.transform = `translate(${x}px, ${y}px)`;
+      ball.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+
+      // Create and update the trail
+      const trail = document.createElement('div');
+      trail.className = 'trail';
+      trail.style.transform = `translate(${x}px, ${y}px)`;
+      trail.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
+      trailContainer.appendChild(trail);
+    }
+
+    function playBounceSound() {
+      bounceSound.currentTime = 0;
+      bounceSound.play();
+    }
+
+    function updateColor() {
+      hue = (hue + 30) % 360; // Increment the hue (change this value for different speed)
+    }
+
+    function animate() {
+      updatePosition();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
