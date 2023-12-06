@@ -41,6 +41,11 @@
       opacity: 0.5;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
     }
+
+    #buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -51,13 +56,18 @@
   <audio class="bounceSound" preload="auto">
     <!-- Add your sound files to the array -->
     <source src="piano-mp3_A1.mp3" type="audio/mp3">
-    <source src="piano-mp3_A2.mp3" type="audio/mp3">
-    <source src="piano-mp3_A3.mp3" type="audio/mp3">
-    <source src="piano-mp3_A4.mp3" type="audio/mp3">
-    <source src="piano-mp3_A5.mp3" type="audio/mp3">
-    <source src="piano-mp3_A6.mp3" type="audio/mp3">
+    <source src="piano-mp3_B1.mp3" type="audio/mp3">
+    <source src="piano-mp3_C1.mp3" type="audio/mp3">
+    <source src="piano-mp3_D1.mp3" type="audio/mp3">
+    <source src="piano-mp3_E1.mp3" type="audio/mp3">
+    <source src="piano-mp3_F1.mp3" type="audio/mp3">
     Your browser does not support the audio element.
   </audio>
+
+  <div id="buttons">
+    <button onclick="toggleAnimation()">Play/Pause</button>
+    <button onclick="restartAnimation()">Restart</button>
+  </div>
 
   <script>
     function random(min, max) {
@@ -68,6 +78,7 @@
     const ball = document.getElementById('ball');
     const bounceSound = document.querySelector('.bounceSound');
     const trailContainer = createTrailContainer();
+    let animationId;
     let x = Math.random() * (square.offsetWidth - ball.offsetWidth);
     let y = Math.random() * (square.offsetHeight - ball.offsetHeight);
     let speed = 2;
@@ -147,10 +158,24 @@
 
     function animate() {
       updatePosition();
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
     }
 
-    animate();
+    function toggleAnimation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      } else {
+        animationId = requestAnimationFrame(animate);
+      }
+    }
+
+    function restartAnimation() {
+      cancelAnimationFrame(animationId);
+      animationId = requestAnimationFrame(animate);
+    }
+
+    animate(); // Start animation by default
   </script>
 </body>
 </html>
